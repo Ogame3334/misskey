@@ -27,5 +27,21 @@ jobs:
           ${{ secrets.KORURI_USER }}@${{ secrets.KORURI_HOST }}:/home/ubuntu/misskey.ogamen.cc/config/* \
           ./.config/
 
-      - name: test
-        run: ls -la ./.config/
+      - name: Copy compose.yml
+        run: |
+          cp ./compose_example.yml ./compose.yml
+
+      - name: Build
+        run: |
+          docker compose build
+
+      - name: Export imgae as tar.gz
+        run: |
+          docker save misskey-web:latest | gzip > misskey.tar.gz
+
+      - name: Send Image tar
+        run: |
+          scp -i ~/.ssh/id_rsa \
+          -P ${{ secrets.KORURI_PORT }} \
+          misskey.tar.gz \
+          ${{ secrets.KORURI_USER }}@${{ secrets.KORURI_HOST }}:/home/ubuntu/misskey.ogamen.cc
