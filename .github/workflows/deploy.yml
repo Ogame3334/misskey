@@ -7,6 +7,7 @@ on:
 jobs:
   ssh:
     runs-on: ubuntu-latest
+    environment: ogame
 
     steps:
       - name: Checkout
