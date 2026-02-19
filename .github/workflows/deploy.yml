@@ -13,11 +13,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Debug
-        run: |
-          pwd
-          ls -la
-
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
@@ -28,9 +23,9 @@ jobs:
       - name: Fetch Config Files
         run: |
           scp -i ~/.ssh/id_rsa \
-          -p ${{ secrets.KORURI_PORT }} \
+          -P ${{ secrets.KORURI_PORT }} \
           ${{ secrets.KORURI_USER }}@${{ secrets.KORURI_HOST }}:/home/ubuntu/misskey.ogamen.cc/config/* \
           ./.config/
 
       - name: test
-        run: ls -la /home/runner/work/Ogame3334/misskey/.config/
+        run: ls -la ./.config/
