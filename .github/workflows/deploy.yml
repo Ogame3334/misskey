@@ -51,12 +51,10 @@ jobs:
           ssh -i ~/.ssh/id_rsa \
             -p ${{ secrets.KORURI_PORT }} \
             -o StrictHostKeyChecking=no \
-            ${{ secrets.KORURI_USER }}@${{ secrets.KORURI_HOST }} << 'EOF'
-              cd /home/ubuntu/misskey.ogamen.cc
-
-              gunzip -c misskey.tar.gz | docker load
-              rm misskey.tar.gz
-
-              docker compose down
-              docker compose up -d --remove-orphans
-            EOF
+            ${{ secrets.KORURI_USER }}@${{ secrets.KORURI_HOST }} \
+            "cd /home/ubuntu/misskey.ogamen.cc && \
+            gunzip -c misskey.tar.gz | docker load && \
+            rm misskey.tar.gz && \
+            cd misskey && \
+            docker compose -f compose.yml down && \
+            docker compose -f compose.yml up -d --remove-orphans"
