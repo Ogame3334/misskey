@@ -151,6 +151,10 @@ SPDX-License-Identifier: AGPL-3.0-only
 					<i v-else class="ti ti-plus"></i>
 					<p v-if="(appearNote.reactionAcceptance === 'likeOnly' || prefer.s.showReactionsCount) && $appearNote.reactionCount > 0" :class="$style.footerButtonCount">{{ number($appearNote.reactionCount) }}</p>
 				</button>
+				<button v-if="appearNote.reactionAcceptance !== 'likeOnly'" ref="starReactButton" :class="$style.footerButton" class="_button" :disabled="$appearNote.myReaction != null && $appearNote.myReaction !== '⭐'" :style="$appearNote.myReaction != null && $appearNote.myReaction !== '⭐' ? 'opacity: 0.3;' : ''" @click="toggleStarReact()">
+					<i v-if="$appearNote.myReaction === '⭐' || $appearNote.reactions['⭐'] > 0" class="ti ti-star-filled" style="color: #e6d617;"></i>
+					<i v-else class="ti ti-star"></i>
+				</button>
 				<button v-if="prefer.s.showClipButtonInNoteFooter" ref="clipButton" :class="$style.footerButton" class="_button" @mousedown.prevent="clip()">
 					<i class="ti ti-paperclip"></i>
 				</button>
@@ -300,6 +304,7 @@ const menuButton = useTemplateRef('menuButton');
 const renoteButton = useTemplateRef('renoteButton');
 const renoteTime = useTemplateRef('renoteTime');
 const reactButton = useTemplateRef('reactButton');
+const starReactButton = useTemplateRef('starReactButton');
 const clipButton = useTemplateRef('clipButton');
 const galleryEl = useTemplateRef('galleryEl');
 const isMyRenote = $i && ($i.id === note.userId);
@@ -584,6 +589,43 @@ function toggleReact() {
 		react();
 	} else {
 		undoReact();
+	}
+}
+
+function doReactStar() {
+	sound.playMisskeySfx('reaction');
+
+	if (props.mock) {
+		emit('reaction', '⭐');
+		$appearNote.reactions['⭐'] = ($appearNote.reactions['⭐'] || 0) + 1;
+		$appearNote.reactionCount++;
+		$appearNote.myReaction = '⭐';
+		return;
+	}
+
+	misskeyApi('notes/reactions/create', {
+		noteId: appearNote.id,
+		reaction: '⭐',
+	}).then(() => {
+		noteEvents.emit(`reacted:${appearNote.id}`, {
+			userId: $i!.id,
+			reaction: '⭐',
+		});
+	});
+}
+
+function toggleStarReact() {
+	pleaseLogin({ openOnRemote: pleaseLoginContext.value });
+	showMovedDialog();
+	if ($appearNote.myReaction === '⭐') {
+		undoReact();
+	} else {
+		if ($appearNote.myReaction != null) {
+			undoReact();
+			setTimeout(doReactStar, 500);
+		} else {
+			doReactStar();
+		}
 	}
 }
 
