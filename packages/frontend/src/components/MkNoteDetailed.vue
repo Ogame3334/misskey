@@ -169,7 +169,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 					<p v-if="(appearNote.reactionAcceptance === 'likeOnly' || prefer.s.showReactionsCount) && $appearNote.reactionCount > 0" :class="$style.noteFooterButtonCount">{{ number($appearNote.reactionCount) }}</p>
 				</button>
 				<button v-if="appearNote.reactionAcceptance !== 'likeOnly'" ref="starReactButton" :class="$style.noteFooterButton" class="_button" :disabled="$appearNote.myReaction != null && $appearNote.myReaction !== '⭐'" :style="$appearNote.myReaction != null && $appearNote.myReaction !== '⭐' ? 'opacity: 0.3;' : ''" @click="toggleStarReact()">
-					<i v-if="$appearNote.myReaction === '⭐' || $appearNote.reactions['⭐'] > 0" class="ti ti-star-filled" style="color: #e6d617;"></i>
+					<i v-if="$appearNote.myReaction === '⭐'" class="ti ti-star-filled" style="color: #e6d617;"></i>
 					<i v-else class="ti ti-star"></i>
 				</button>
 				<button v-if="prefer.s.showClipButtonInNoteFooter" ref="clipButton" class="_button" :class="$style.noteFooterButton" @mousedown.prevent="clip()">
