@@ -177,6 +177,16 @@ function onClick(ev: PointerEvent) {
 			});
 		}
 
+		if (!isLocal.value && $i && ($i.isModerator || $i.policies.canManageCustomEmojis)) {
+			menuItems.push({
+				text: i18n.ts.import,
+				icon: 'ti ti-plus',
+				action: async () => {
+					await importEmoji();
+				},
+			});
+		}
+
 		os.popupMenu(menuItems, ev.currentTarget ?? ev.target);
 	}
 }
@@ -219,6 +229,32 @@ function unmute() {
 			return;
 		}
 		unmuteEmoji(emojiCodeToMute);
+	});
+}
+
+async function importEmoji() {
+	const { canceled } = await os.confirm({
+		type: 'question',
+		title: i18n.ts.import,
+		text: i18n.tsx.importEmojiConfirm({ name: `:${props.name}:` }),
+	});
+	if (canceled) return;
+
+	const emoji = await misskeyApiGet('emoji', {
+		name: customEmojiName.value,
+		host: props.host,
+	}).catch(() => null);
+
+	if (emoji == null) {
+		os.alert({
+			type: 'error',
+			text: i18n.ts.somethingHappened,
+		});
+		return;
+	}
+
+	await os.apiWithDialog('admin/emoji/copy', {
+		emojiId: emoji.id,
 	});
 }
 

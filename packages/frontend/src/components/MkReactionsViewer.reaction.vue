@@ -202,7 +202,48 @@ async function menu(ev: PointerEvent) {
 		});
 	}
 
+	if (!isLocalCustomEmoji && props.reaction[0] === ':' && props.reaction.includes('@') && $i && ($i.isModerator || $i.policies.canManageCustomEmojis)) {
+		menuItems.push({
+			text: i18n.ts.import,
+			icon: 'ti ti-plus',
+			action: async () => {
+				await importEmoji();
+			},
+		});
+	}
+
 	os.popupMenu(menuItems, ev.currentTarget ?? ev.target);
+}
+
+async function importEmoji() {
+	const emojiPart = props.reaction.replace(/:/g, '');
+	const parts = emojiPart.split('@');
+	const emojiName = parts[0];
+	const emojiHost = parts[1];
+
+	const { canceled } = await os.confirm({
+		type: 'question',
+		title: i18n.ts.import,
+		text: i18n.tsx.importEmojiConfirm({ name: props.reaction }),
+	});
+	if (canceled) return;
+
+	const emoji = await misskeyApiGet('emoji', {
+		name: emojiName,
+		host: emojiHost,
+	}).catch(() => null);
+
+	if (emoji == null) {
+		os.alert({
+			type: 'error',
+			text: i18n.ts.somethingHappened,
+		});
+		return;
+	}
+
+	await os.apiWithDialog('admin/emoji/copy', {
+		emojiId: emoji.id,
+	});
 }
 
 function anime() {

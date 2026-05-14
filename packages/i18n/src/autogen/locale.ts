@@ -5532,6 +5532,10 @@ export interface Locale extends ILocale {
      */
     "unmuteX": ParameterizedString<"x">;
     /**
+     * {name}をインポートしますか？
+     */
+    "importEmojiConfirm": ParameterizedString<"name">;
+    /**
      * 中止
      */
     "abort": string;
