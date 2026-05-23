@@ -52,7 +52,7 @@ jobs:
             -p ${{ secrets.KORURI_PORT }} \
             -o StrictHostKeyChecking=no \
             ${{ secrets.KORURI_USER }}@${{ secrets.KORURI_HOST }} \
-            /home/ubuntu/misskey_cc_manual_backup.sh
+            /home/ubuntu/misskey_cc_manual_backup.sh "backup on push"
 
       - name: Deploy on Server
         run: |
