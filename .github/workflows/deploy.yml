@@ -46,6 +46,14 @@ jobs:
           misskey.tar.gz \
           ${{ secrets.KORURI_USER }}@${{ secrets.KORURI_HOST }}:/home/ubuntu/misskey.ogamen.cc
 
+      - name: BackUp
+        run: |
+          ssh -i ~/.ssh/id_rsa \
+            -p ${{ secrets.KORURI_PORT }} \
+            -o StrictHostKeyChecking=no \
+            ${{ secrets.KORURI_USER }}@${{ secrets.KORURI_HOST }} \
+            /home/ubuntu/misskey_cc_manual_backup.sh
+
       - name: Deploy on Server
         run: |
           ssh -i ~/.ssh/id_rsa \
