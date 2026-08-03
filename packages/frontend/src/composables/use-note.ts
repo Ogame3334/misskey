@@ -361,7 +361,7 @@ export function useNote(
 		} else {
 			if ($appearNote.myReaction != null) {
 				undoReact();
-				setTimeout(() => doReactStar(customMockCallback), 500);
+				window.setTimeout(() => doReactStar(customMockCallback), 500);
 			} else {
 				doReactStar(customMockCallback);
 			}
